@@ -60,6 +60,7 @@
     const strtplayer2 = document.querySelector('.startplayer2');
     const vs = document.querySelector('.vs');
     const twoplayerhomebtn = document.querySelector('.twoplayerhomebtn');
+    const twoPlayerQuitBtn = document.getElementById('twoPlayerQuitBtn');
     const twoplayerctnt = document.querySelector('.twoPstart_game_cont');
     const Player1 = document.querySelector('.player1');
     const middcont = document.querySelector('.middlecont');
@@ -118,6 +119,8 @@
     let rounds = [];
     let currentQuestionIndex = 0;
     let allQuestions = [];
+    let twoPlayerCountdownInterval = null;
+    let activeBuzzHandler = null;
     
     
       
@@ -461,6 +464,11 @@ window.addEventListener('DOMContentLoaded', () => {
   twoplayerhomebtn.addEventListener('click', () =>{
     resetTwoplayer();
     
+  });
+  twoPlayerQuitBtn.addEventListener('click', () => {
+    const shouldQuit = confirm('Quit this two-player match and return to the menu?');
+    if (!shouldQuit) return;
+    quitTwoPlayerMatch();
   });
   twopnextround.addEventListener('click', ()=>{
     answeringRound.currentTime = 0;
@@ -1028,30 +1036,17 @@ function nextRound() {
     document.querySelector(".play2").textContent = player2;
     document.querySelector(".P1teamName").textContent = player1;
     document.querySelector(".P2teamName").textContent = player2;
+    vs_cont.classList.remove('fade-out');
+    vs_cont.style.opacity = '1';
     vs_cont.classList.add('vs-show');
     vs_cont.style.display = 'flex';
-    
-    // Add delay before starting animations
-    // setTimeout(() => {
-    //     strtplayer1.classList.add('fade-in');
-    // }, 500);
 
-    // strtplayer1.addEventListener('animationend', (e) => {
-    //     vs.classList.add('flip-animate');
-    //     vs.style.opacity = '1';
-    // }, {once: true});
-
-    // vs.addEventListener('animationend', (e) => {
-    //     strtplayer2.classList.add('fade-in');
-    //     strtplayer2.style.opacity = '1';
-    // }, {once: true});
-
-    strtplayer2.addEventListener('animationend', (e) => {
+    strtplayer2.onanimationend = (e) => {
         // Add delay before hiding VS container
         setTimeout(() => {
            
             vs_cont.classList.add('fade-out');
-            vs_cont.addEventListener('animationend', () => {
+            vs_cont.onanimationend = () => {
                  playMusic(answeringRound);
                 vs_cont.style.display = 'none';
                 twoplayerctnt.classList.add('fade-in');
@@ -1061,11 +1056,13 @@ function nextRound() {
                     twoPround.classList.add('fade-out');
                 }, 1500);
                 stopMusic(audio);
-            }, {once: true});
+                vs_cont.onanimationend = null;
+            };
         }, 2000); // Increased delay to 2 seconds
-    }, {once: true});
+        strtplayer2.onanimationend = null;
+    };
 
-    twoPround.addEventListener('animationend', (e) =>{
+    twoPround.onanimationend = (e) =>{
       Player1.classList.add('fade-in');
       middcont.classList.add('fade-in');
       Player2.classList.add('fade-in');
@@ -1073,22 +1070,23 @@ function nextRound() {
       Player1.style.display = 'flex';
       middcont.style.display = 'flex';
       Player2.style.display = 'flex';
-  });
-  middcont.addEventListener('animationend', (e) =>{
+  };
+  middcont.onanimationend = (e) =>{
     twop1.classList.add('fade-in');
     setTimeout(() => {
       twop1.classList.remove('fade-in');
       twop1.classList.add('fade-out');
   
-      twop1.addEventListener('animationend', (e) => {
+      twop1.onanimationend = (e) => {
           twop1.style.display = 'none';
           twop2.classList.add('fade-in'); 
-      });
+          twop1.onanimationend = null;
+      };
     
     }, 2000); //
-});
+};
 survequestion.textContent = currentQuestion.question;
-  twop2.addEventListener('animationend', (e) =>{
+  twop2.onanimationend = (e) =>{
     setTimeout(() => {
      twop2.classList.remove('fade-in');
      twop2.classList.add('fade-out');
@@ -1096,8 +1094,21 @@ survequestion.textContent = currentQuestion.question;
      survequestion.classList.add('fade-in'); 
      survequestion.addEventListener('animationend', onSurveyQuestionFadeInEnd, { once: true });
     }, 2000); 
-  });
+  };
   
+  }
+
+  function quitTwoPlayerMatch() {
+    answeringRound.pause();
+    gameover.pause();
+    resetTwoplayer();
+    twoplayerctnt.style.display = 'none';
+    twoplayer_cont.style.display = 'none';
+    choose_cont.style.display = 'flex';
+    if (isAudioOn) {
+      audio.currentTime = 0;
+      playMusic(audio);
+    }
   }
   function onSurveyQuestionFadeInEnd() {
     setTimeout(() => {
@@ -1109,6 +1120,22 @@ survequestion.textContent = currentQuestion.question;
   }
   
   function resetTwoplayer() {
+    if (twoPlayerCountdownInterval) {
+      clearInterval(twoPlayerCountdownInterval);
+      twoPlayerCountdownInterval = null;
+    }
+    if (activeBuzzHandler) {
+      document.removeEventListener('keydown', activeBuzzHandler);
+      activeBuzzHandler = null;
+    }
+    twopanswerInput.onkeydown = null;
+    strtplayer2.onanimationend = null;
+    vs_cont.onanimationend = null;
+    twoPround.onanimationend = null;
+    middcont.onanimationend = null;
+    twop1.onanimationend = null;
+    twop2.onanimationend = null;
+
     currentRound = 1;
     fetch(`api/data.php?round=${currentRound}`)
     .then(res => res.json())
@@ -1218,15 +1245,17 @@ survequestion.textContent = currentQuestion.question;
     p2wrong.style.display ='none';
     p2wrong.classList.remove('fade-in');
 
-    currentQuestion.answers.forEach((item, index) => {
-      document.querySelector(`.middlecont .answer${index + 1}`).textContent = '';
-      document.querySelector(`.middlecont .points${index + 1}`).textContent = '';
+    for (let index = 1; index <= 5; index++) {
+      const answerText = document.querySelector(`.middlecont .answer${index}`);
+      const pointsText = document.querySelector(`.middlecont .points${index}`);
+      const answerContainer = document.querySelector(`.middlecont .answer_cont${index}`);
+      const pointContainer = document.querySelector(`.middlecont .point_cont${index}`);
 
-      const answerContainer = document.querySelector(`.middlecont .answer_cont${index + 1}`);
-      const point_cont = document.querySelector(`.middlecont .point_cont${index + 1}`);
-      answerContainer.style.visibility = "hidden";
-      point_cont.style.visibility = "hidden";
-    });
+      if (answerText) answerText.textContent = '';
+      if (pointsText) pointsText.textContent = '';
+      if (answerContainer) answerContainer.style.visibility = "hidden";
+      if (pointContainer) pointContainer.style.visibility = "hidden";
+    }
     
     let p1scoreEl = document.getElementById("P1points");
     let p2scoreEl = document.getElementById("p2points");
@@ -1290,7 +1319,15 @@ survequestion.textContent = currentQuestion.question;
     p1keyDisplay.style.display = 'flex';
     p2keyDisplay.classList.add('fade-in');
     p2keyDisplay.style.display = 'flex';
-    const countdownInterval = setInterval(() => {
+    if (twoPlayerCountdownInterval) {
+      clearInterval(twoPlayerCountdownInterval);
+    }
+    if (activeBuzzHandler) {
+      document.removeEventListener('keydown', activeBuzzHandler);
+      activeBuzzHandler = null;
+    }
+
+    twoPlayerCountdownInterval = setInterval(() => {
         
         count--;
         if (count > 0) {
@@ -1299,11 +1336,12 @@ survequestion.textContent = currentQuestion.question;
             countdownEl.textContent = "Buzz now!";
             
         } else {
-            clearInterval(countdownInterval);
+            clearInterval(twoPlayerCountdownInterval);
+            twoPlayerCountdownInterval = null;
             countdownEl.style.display = 'none';
             buzzerActive = true;
-            
-            document.addEventListener('keydown', onBuzz);
+            activeBuzzHandler = onBuzz;
+            document.addEventListener('keydown', activeBuzzHandler);
         }
     }, 1000);
 
@@ -1329,6 +1367,7 @@ survequestion.textContent = currentQuestion.question;
         
 
         document.removeEventListener('keydown', onBuzz);
+        activeBuzzHandler = null;
         setTimeout(() => {
           whoBuzzedEl.classList.remove('fade-in');
           whoBuzzedEl.classList.add('fade-out');
@@ -1364,7 +1403,7 @@ survequestion.textContent = currentQuestion.question;
 function TwoPinput() {
    player1 = document.getElementById('player1Name').value.trim();
    player2 = document.getElementById('player2Name').value.trim();
-  twopanswerInput.addEventListener("keydown", function (e) {
+  twopanswerInput.onkeydown = function (e) {
     if (e.key === "Enter") {
       const userAnswer = twopanswerInput.value.trim().toLowerCase();
       if (userAnswer === "") return;
@@ -1548,7 +1587,7 @@ function TwoPinput() {
       }
       twopanswerInput.value = "";
     }
-  });
+  };
 }
 function twoPmistakes(player1, player2) {
   if (buzzedPlayer === player1) {
@@ -1803,15 +1842,17 @@ function twoPResetround(){
   p2wrong.classList.remove('fade-in');
 
 
-  currentQuestion.answers.forEach((_, index) => {
-    document.querySelector(`.middlecont .answer${index + 1}`).textContent = '';
-    document.querySelector(`.middlecont .points${index + 1}`).textContent = '';
+  for (let index = 1; index <= 5; index++) {
+    const answerText = document.querySelector(`.middlecont .answer${index}`);
+    const pointsText = document.querySelector(`.middlecont .points${index}`);
+    const answerContainer = document.querySelector(`.middlecont .answer_cont${index}`);
+    const pointContainer = document.querySelector(`.middlecont .point_cont${index}`);
 
-    const answerContainer = document.querySelector(`.middlecont .answer_cont${index + 1}`);
-    const point_cont = document.querySelector(`.middlecont .point_cont${index + 1}`);
-    answerContainer.style.visibility = "hidden";
-    point_cont.style.visibility = "hidden";
-  });
+    if (answerText) answerText.textContent = '';
+    if (pointsText) pointsText.textContent = '';
+    if (answerContainer) answerContainer.style.visibility = "hidden";
+    if (pointContainer) pointContainer.style.visibility = "hidden";
+  }
   
 
   for (let i = 1; i <= maxWrongGuesses; i++) {
