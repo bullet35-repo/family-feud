@@ -43,8 +43,9 @@
     const resumebtn = document.getElementById('resume');
     const nextroundbtn = document.getElementById('nextround');
     const  twoplayer_cont = document.querySelector('.twoplayer_content');
-    const twoplayer_instruction =document.querySelector('.instructions_content');
+    const twoplayer_instruction = document.querySelector('.instructions_content');
     const twostartbtn = document.getElementById('startTwoPlayerBtn');
+    const backTwoPlayerBtn = document.getElementById('backTwoPlayerBtn');
     const start_twoplayer = document.getElementById('startTwoPlayerGameBtn');
     const twoPstargame = document.querySelector('.twoplayer_startGame');
     const vs_cont = document.querySelector('.vs-container');
@@ -123,9 +124,96 @@
     let totalPoints = 0;
     let pointValue =0;
     const goodJob = document.querySelector('.goodJob');
+    const SETTINGS_STORAGE_KEY = 'familyFeudSettings';
+    const musicToggleButtons = [
+      document.getElementById('audioBtn'),
+      document.getElementById('pauseaudioBtn')
+    ].filter(Boolean);
+    const soundToggleButtons = [
+      document.getElementById('soundBtn'),
+      document.getElementById('pausesoundBtn')
+    ].filter(Boolean);
+    const musicTracks = [audio, answeringRound, gameover].filter(Boolean);
+
+    function updateToggleButtons(buttons, enabled) {
+      buttons.forEach(button => {
+        button.innerText = enabled ? 'ON' : 'OFF';
+        button.classList.toggle('off', !enabled);
+        button.style.backgroundColor = enabled ? '' : 'gray';
+      });
+    }
+
+    function saveGlobalSettings() {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
+        music: isAudioOn,
+        sound: isSoundOn
+      }));
+    }
+
+    function syncSettingsUi() {
+      updateToggleButtons(musicToggleButtons, isAudioOn);
+      updateToggleButtons(soundToggleButtons, isSoundOn);
+    }
+
+    function loadGlobalSettings() {
+      const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (!savedSettings) {
+        syncSettingsUi();
+        return;
+      }
+
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        isAudioOn = parsedSettings.music !== false;
+        isSoundOn = parsedSettings.sound !== false;
+      } catch (error) {
+        localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      }
+
+      syncSettingsUi();
+    }
+
+    function playMusic(track) {
+      if (!isAudioOn || !track) return;
+      track.play().catch(error => {
+        console.error('Error playing music:', error);
+      });
+    }
+
+    function stopMusic(track) {
+      if (track) {
+        track.pause();
+      }
+    }
+
+    function playSound(sound) {
+      if (!isSoundOn || !sound) return;
+      sound.currentTime = 0;
+      sound.play().catch(error => {
+        console.error('Error playing sound:', error);
+      });
+    }
+
+    function setMusicEnabled(enabled, trackToResume = null) {
+      isAudioOn = enabled;
+      if (!enabled) {
+        musicTracks.forEach(stopMusic);
+      } else if (trackToResume) {
+        playMusic(trackToResume);
+      }
+      syncSettingsUi();
+      saveGlobalSettings();
+    }
+
+    function setSoundEnabled(enabled) {
+      isSoundOn = enabled;
+      syncSettingsUi();
+      saveGlobalSettings();
+    }
     
 
 window.addEventListener('DOMContentLoaded', () => { 
+  loadGlobalSettings();
   fetch(`api/data.php?round=${currentRound}`)
       .then(res => res.json())
       .then(data => {
@@ -181,12 +269,13 @@ window.addEventListener('DOMContentLoaded', () => {
         card.style.display = 'none';      
 
         // Try to play the audio
-        audio.play().catch(() => {
+        playMusic(audio);
+        if (isAudioOn && audio.paused) {
             // If autoplay is blocked, wait for a user interaction
             document.body.addEventListener('click', () => {
-                audio.play();
+                playMusic(audio);
             }, { once: true });
-        });
+        }
     });
 
     // Add event listener for final home button
@@ -206,86 +295,23 @@ window.addEventListener('DOMContentLoaded', () => {
         setting_cont.style.display = 'none';
     } );
     setting_cont.classList.add('fade-in');
-    document.getElementById('audioBtn').addEventListener('click', function() {
-        const button = this; 
-        const audioDiv = document.querySelector('.audio span button'); 
-       
-        if (button.innerText === 'ON') {
-            button.innerText = 'OFF';
-            audioDiv.style.backgroundColor = 'gray'; 
-            button.classList.add('off'); 
-            audio.pause();
-            isAudioOn = false;
-        } else {
-            button.innerText = 'ON'; 
-            audioDiv.style.backgroundColor = ''; 
-            button.classList.remove('off'); 
-            audio.play();
-            isAudioOn = true;
-        }
+    document.getElementById('audioBtn').addEventListener('click', () => {
+        setMusicEnabled(!isAudioOn, audio);
     });
     buttons.forEach(button => {
     button.addEventListener('click', () => {
-        if (isSoundOn) {
-            clickEffect.play().catch(err => {
-                console.error('Error playing the click sound:', err);
-            });
-        }
+        playSound(clickEffect);
     });
   });
     
-    document.getElementById('soundBtn').addEventListener('click', function() {
-        const clickbutton = this; // Get the button element
-        const soundDiv = document.querySelector('.sound span button');
-       
-        // Toggle the button text and background color
-        if (clickbutton.innerText === 'ON') {
-            clickbutton.innerText = 'OFF'; 
-            soundDiv.style.backgroundColor = 'gray'; 
-            clickbutton.classList.add('off'); 
-            isSoundOn = false;
-        } else {
-            clickbutton.innerText = 'ON'; 
-            soundDiv.style.backgroundColor = ''; 
-            clickbutton.classList.remove('off'); 
-            isSoundOn = true;
-        }
+    document.getElementById('soundBtn').addEventListener('click', () => {
+        setSoundEnabled(!isSoundOn);
     });
-    document.getElementById('pauseaudioBtn').addEventListener('click', function() {
-      const button = this; 
-      const audioDiv = document.querySelector('.audio span button'); 
-
-      if (button.innerText === 'ON') {
-          button.innerText = 'OFF';
-          audioDiv.style.backgroundColor = 'gray'; 
-          button.classList.add('off'); 
-          answeringRound.pause();
-          isAudioOn = false;
-      } else {
-          button.innerText = 'ON'; 
-          audioDiv.style.backgroundColor = ''; 
-          button.classList.remove('off'); 
-          answeringRound.play();
-          isAudioOn = true;
-      }
+    document.getElementById('pauseaudioBtn').addEventListener('click', () => {
+      setMusicEnabled(!isAudioOn, answeringRound);
   });
-    document.getElementById('pausesoundBtn').addEventListener('click', function() {
-      const clickbutton = this; // Get the button element
-      const soundDiv = document.querySelector('.sound span button');
-     
-  
-      // Toggle the button text and background color
-      if (clickbutton.innerText === 'ON') {
-          clickbutton.innerText = 'OFF'; 
-          soundDiv.style.backgroundColor = 'gray'; 
-          clickbutton.classList.add('off');
-          isSoundOn = false;
-      } else {
-          clickbutton.innerText = 'ON'; 
-          soundDiv.style.backgroundColor = ''; 
-          clickbutton.classList.remove('off'); 
-          isSoundOn = true;
-      }
+    document.getElementById('pausesoundBtn').addEventListener('click', () => {
+      setSoundEnabled(!isSoundOn);
   });
      playbtn.addEventListener('click', () =>{
       container.style.display = 'none';
@@ -327,7 +353,7 @@ window.addEventListener('DOMContentLoaded', () => {
       answeringRound.pause();
       audio.currentTime = 0;
       if (isAudioOn) {
-        audio.play(); 
+        playMusic(audio); 
       }
       resetgame();
       pausecont.style.display= 'none';
@@ -357,7 +383,7 @@ window.addEventListener('DOMContentLoaded', () => {
   nextroundbtn.addEventListener( 'click', () =>{
     answeringRound.currentTime = 0;
     if(isAudioOn){
-      answeringRound.play();
+      playMusic(answeringRound);
     }
     nextRound();
   });
@@ -371,6 +397,12 @@ window.addEventListener('DOMContentLoaded', () => {
     twoplayer_instruction.style.display = 'none';
     twoPstargame.style.display = 'flex';
 
+  });
+  backTwoPlayerBtn.addEventListener('click', () => {
+    twoplayer_cont.style.display = 'none';
+    choose_cont.style.display = 'flex';
+    twoplayer_instruction.style.display = 'flex';
+    twoPstargame.style.display = 'none';
   });
   start_twoplayer.addEventListener('click', () =>{
      player1 = document.getElementById('player1Name').value.trim();
@@ -394,7 +426,7 @@ window.addEventListener('DOMContentLoaded', () => {
   twopnextround.addEventListener('click', ()=>{
     answeringRound.currentTime = 0;
     if(isAudioOn){
-      answeringRound.play();
+      playMusic(answeringRound);
     }
     twoPlayerNextRound();
   });
@@ -411,7 +443,7 @@ round.addEventListener('animationend', (e) => {
 });
 function startgame(){
   
-  answeringRound.play();
+  playMusic(answeringRound);
   start_game.style.display = 'flex';
   round.textContent = `Round ${currentRound}`;
   round.classList.add('fade-out');
@@ -614,8 +646,7 @@ function input(){
   )   {
            revealedAnswers[index] = true;
            correctAnswers++;
-           correctSound.currentTime = 0; 
-           correctSound.play();
+           playSound(correctSound);
            setTimeout(() => {
             document.querySelector(`.answer${index + 1}`).textContent = item.text;
             document.querySelector(`.points${index + 1}`).textContent = item.points;
@@ -674,7 +705,7 @@ function input(){
 }   
 function mistakes(){
   const wrongSound = new Audio('assets/audio/wrongGuess.mp3');
-  wrongSound.play();
+  playSound(wrongSound);
   if(wrongGuesses <= maxWrongGuesses){
     wrongGuesses++;
     xMark = document.getElementById(`x${wrongGuesses}`);
@@ -782,7 +813,7 @@ function mistakes(){
             else {
               document.querySelector(".round_result_over").style.display = "flex";
               gameover.currentTime = 0;
-              gameover.play();
+              playMusic(gameover);
             }
           }
         }, totalDelay + 100);
@@ -982,7 +1013,7 @@ function nextRound() {
            
             vs_cont.classList.add('fade-out');
             vs_cont.addEventListener('animationend', () => {
-                 answeringRound.play();
+                 playMusic(answeringRound);
                 vs_cont.style.display = 'none';
                 twoplayerctnt.classList.add('fade-in');
                 twoplayerctnt.style.display = 'flex';
@@ -990,7 +1021,7 @@ function nextRound() {
                 setTimeout(() => {
                     twoPround.classList.add('fade-out');
                 }, 1500);
-                audio.pause();
+                stopMusic(audio);
             }, {once: true});
         }, 2000); // Increased delay to 2 seconds
     }, {once: true});
@@ -1202,7 +1233,7 @@ survequestion.textContent = currentQuestion.question;
    
     
     audio.currentTime = 0;
-    audio.play();
+    playMusic(audio);
   }
   
   function startBuzzCountdown() {
@@ -1251,7 +1282,7 @@ survequestion.textContent = currentQuestion.question;
             return;
         }
         const buzzSound = new Audio('assets/audio/wrongGuess.mp3');
-        buzzSound.play();
+        playSound(buzzSound);
         whoBuzzedEl.textContent = `${buzzedPlayer} buzzed first!`;
         whoBuzzedEl.style.display = 'block';
         buzzerActive = false;
@@ -1314,8 +1345,7 @@ function TwoPinput() {
         )    {
           revealedAnswers[index] = true;
           correctAnswers++;
-          correctSound.currentTime = 0;
-          correctSound.play();
+          playSound(correctSound);
           setTimeout(() => {
           document.querySelector(`.middlecont .answer${index + 1}`).textContent = item.text;
           document.querySelector(`.middlecont .points${index + 1}`).textContent = item.points;
@@ -1487,7 +1517,7 @@ function twoPmistakes(player1, player2) {
     p1WrongGuesses++;
     wrongGuesses++;
     const wrongSound = new Audio('assets/audio/wrongGuess.mp3');
-    wrongSound.play();
+    playSound(wrongSound);
     if (p1WrongGuesses <= maxWrongGuesses) {
       const xMark = document.getElementById(`p1x${p1WrongGuesses}`);
       if (xMark) {
@@ -1521,7 +1551,7 @@ function twoPmistakes(player1, player2) {
     p2WrongGuesses++;
     wrongGuesses++;
     const wrongSound = new Audio('assets/audio/wrongGuess.mp3');
-    wrongSound.play();
+    playSound(wrongSound);
     if (p2WrongGuesses <= maxWrongGuesses) {
       const xMark = document.getElementById(`p2x${p2WrongGuesses}`);
       if (xMark) {
@@ -1779,7 +1809,7 @@ function twoPResetround(){
 }
 function final_round() {
   answeringRound.currentTime = 0;
-  answeringRound.play();
+  playMusic(answeringRound);
   let winner = player1totalpoints > player2Totalpoints ? player1 : player2;
   player1totalpoints = 0;
   player2Totalpoints = 0;
@@ -2035,13 +2065,13 @@ function final_round() {
             answerElement.textContent = correctAnswer;
             container.classList.add('fade-in');
             const correctSound = new Audio('assets/audio/corectanswer.mp3');
-            correctSound.play();
+            playSound(correctSound);
           } else {
             // If answer was wrong, show 0 points
             pointsElement.textContent = '0';
             container.classList.add('fade-in');
             const wrongSound = new Audio('assets/audio/wrongGuess.mp3');
-            wrongSound.play();
+            playSound(wrongSound);
           }
         }
 
@@ -2190,6 +2220,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeLeaderboard = document.querySelector('.x_button');
     const exitBtn = document.querySelector('.exit');
 
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value ?? '';
+        return div.innerHTML;
+    }
+
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
             window.location.href = '../../index.php';
@@ -2203,6 +2239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show leaderboard
     leaderboardBtn.addEventListener('click', function() {
         leaderboardCont.style.display = 'block';
+        menuCont.style.display = 'none';
         loadLeaderboard();
     });
 
@@ -2236,15 +2273,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 response.data.forEach((player, index) => {
                     const playerElement = document.createElement('div');
                     playerElement.className = 'player';
+                    const username = escapeHtml(player.username || 'Player');
+                    const profileImage = encodeURIComponent(player.profile_image || 'default.png');
+                    const totalPoints = Number.parseInt(player.total_points, 10) || 0;
                     playerElement.innerHTML = `
                         <div class="rank">${index + 1}</div>
-                        <img src="../../public/assets/images/profiles/${player.profile_image || 'default.png'}" alt="Player Avatar" class="avatar" onerror="this.src='../../public/assets/images/profiles/default.png'">
+                        <img src="../../public/assets/images/profiles/${profileImage}" alt="Player Avatar" class="avatar" onerror="this.src='../../public/assets/images/profiles/default.png'">
                         <div class="info">
-                            <div class="username">${player.username}</div>
-                            <div class="score-container">
-                                <img src="assets/images/trophy.png" alt="Trophy" class="trophy-icon">
-                                <span class="score">${player.total_points}</span>
-                            </div>
+                            <div class="username" title="${username}">${username}</div>
+                        </div>
+                        <div class="score-container">
+                            <img src="assets/images/trophy.png" alt="Trophy" class="trophy-icon">
+                            <span class="score">${totalPoints}</span>
                         </div>
                     `;
                     topplayers.appendChild(playerElement);

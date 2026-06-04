@@ -46,13 +46,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Register - Game Library</title>
     <link rel="stylesheet" href="public/assets/css/style.css">
     <style>
+        body.auth-page {
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        .auth-main {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
         .auth-container {
-            max-width: 400px;
-            margin: 4rem auto;
+            width: min(440px, 100%);
+            max-width: 440px;
+            margin: 0 auto;
             padding: 2rem;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+        }
+        .auth-container h1 {
+            color: #172554;
+            margin-bottom: 1.5rem;
         }
         .auth-form {
             display: flex;
@@ -75,17 +91,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 1rem;
         }
         .auth-btn {
-            background: #2c3e50;
+            background: #c1121f;
             color: white;
             padding: 0.8rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 999px;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 700;
             transition: background 0.3s;
         }
         .auth-btn:hover {
-            background: #34495e;
+            background: #a30f1a;
         }
         .auth-links {
             margin-top: 1rem;
@@ -110,17 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
-<body>
-    <header>
-        <nav>
-            <div class="logo">Game Library</div>
-            <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
+<body class="auth-page">
+    <main class="auth-main">
         <div class="auth-container">
             <h1>Register</h1>
             <?php if ($error): ?>
@@ -151,9 +159,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Game Library. All rights reserved.</p>
-    </footer>
 </body>
 </html> 

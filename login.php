@@ -45,9 +45,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Login - Game Library</title>
     <link rel="stylesheet" href="public/assets/css/style.css">
     <style>
+        body.auth-page {
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        .auth-main {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
         .auth-container {
+            width: min(440px, 100%);
             max-width: 440px;
-            margin: 4rem auto;
+            margin: 0 auto;
             padding: 2rem;
             background: white;
             border-radius: 8px;
@@ -147,17 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
-<body>
-    <header>
-        <nav>
-            <div class="logo">Game Library</div>
-            <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
+<body class="auth-page">
+    <main class="auth-main">
         <div class="auth-container">
             <h1>Login</h1>
             <p class="auth-intro">Sign in to keep your profile and points, or jump straight into Family Feud as a guest.</p>
@@ -188,9 +191,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Game Library. All rights reserved.</p>
-    </footer>
 </body>
 </html> 
