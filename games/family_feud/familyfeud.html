@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Feud</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.6.3/css/all.min.css" integrity="sha512-f2MWjotY+JCWDlE0+QAshlykvZUtIm35A6RHwfYZPdxKgLJpL8B+VVxjpHJwZDsZaWdyHVhlIHoblFYGkmrbhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=pause" />
+</head>
+<body>
+    <div class="card">
+        <img src="assets/images/Family-Feud.jpg" alt="alt error">
+        <button class="btn" id="startbtn">Play to Start</button>
+        <span>Family Feud</span>
+        <p>We asked an audience of 100 people a series of everyday questions. Guess the top 5 popular answers correctly in this family feud style trivia game. Score points across 3 different rounds. Can you be the first person to guess all answers correctly?</p>
+    </div>
+    <div class="container" id="start">
+            
+            <button class="settingsbtn" id="settingsbtn"><img src="assets/images/settings.png" alt=""></button>
+        <div class="profile-container">
+            <button class="menubtn" id="menubtn"><img src="assets/images/menu.png" alt=""></button>
+
+            <img src="assets/images/default.png" alt="Profile" class="profile-pic" id="profilePic">
+            <span class="username" id="usernameDisplay">Guest User</span>
+                <div class="trophies">
+                    <img src="assets/images/trophy.png" alt="Trophy">
+                    <span id="trophyCount">0</span>
+                </div>
+        </div>
+
+        <div class="setting_container">
+            <h4>Settings</h4>
+            <div class="audio">
+                <img src="assets/images/music.png" alt=""><span><button id="audioBtn">ON</button></span>
+            </div>
+            <div class="sound">
+                <img src="assets/images/volume.png" alt=""><span><button id="soundBtn">ON</button></span>
+                <audio src="assets/audio/click.mp3" id="effect" preload="auto"></audio>
+            </div>
+            <button class="closebtn" id="closeBtn">CLOSE</button>
+        </div>
+
+        <img src="assets/images/logo.png" alt="No image" class="logo">
+        <button class="playbtn" id="playbtn">PLAY</button>
+        <audio src="assets/audio/videoplayback.mp3" id="themeAudio" loop></audio>
+        <audio src="assets/audio/answeringround.mp3" id="answeringround" loop></audio>
+    </div>
+    <div class="choose_cont">  
+        <button class="return" id="return">
+            <img src="assets/images/return.png" alt="">
+        </button>
+        <button class="single_player" id="singlebtn">
+            <img src="assets/images/singlePlayer.png" alt="">
+            <h3>
+                Single Player
+            </h3>
+        </button>
+       
+        <button class="two_player">
+            <img src="assets/images/2_player.png" alt="">
+            <h3>
+                Two Player
+            </h3>
+        </button>
+    </div>
+    <div class="start_game">
+        <button class="pause" id="pause">
+            <img src="assets/images/pause.png" alt="error">
+            </button>
+        <h3>Round </h3>
+        <div class="topcont">
+            <div class="point_cont">
+             <img src="assets/images/trophy.png" alt="error"> <span id="points">0</span>
+            </div>
+            <div class="timer">
+                <img src="assets/images/timer.png" alt=""> <span id="timeDisplay">30s</span>
+            </div>
+            <div class="incorect">
+                <span class="x" id="x1"><b>X</b></span>
+                <span class="x" id="x2"><b>X</b></span>
+                <span class="x" id="x3"><b>X</b></span>
+            </div>
+        </div>
+        <div class="undercont">
+            <div class="screen">
+                <p class="p1">We asked 100 people in a survey</p>
+                <p class="p2">Here is your question....</p>
+                <p class="question"></p>
+                <p class="end">That is three mistakes. This round is over</p>
+                <p class="left_out">You left out with these answers</p>
+                <p class="round2">Points in this round is doubled </p>
+                <p class="round3">Points in this round is trippled</p>
+                <p class="goodJob">Good job on gueesing it all. Keep it up!</p>
+            </div>
+            <div class="survey_container">
+                <div class="cont1">
+                    <div class="answer_cont1"><p class="answer1"></p></div>
+                    <div class="point_cont1"><p class="points1"></p></div>
+                </div>
+                <div class="cont2">
+                    <div class="answer_cont2"><p class="answer2"></p></div>
+                    <div class="point_cont2"><p class="points2"></p></div>
+                </div>
+                <div class="cont3">
+                    <div class="answer_cont3"><p class="answer3"></p></div>
+                    <div class="point_cont3"><p class="points3"></p></div>
+                </div>
+                <div class="cont4">
+                    <div class="answer_cont4"><p class="answer4"></p></div>
+                    <div class="point_cont4"><p class="points4"></p></div>
+                </div>
+                <div class="cont5">
+                    <div class="answer_cont5"><p class="answer5"></p></div>
+                    <div class="point_cont5"><p class="points5"></p></div>
+                </div>
+            </div>
+        </div>
+        <input type="text" id="answerInput" placeholder="Enter your answer here!" />
+    </div>
+    <div class="round_result_proceed">
+        <h3>Round Result</h3>
+        <p class="sp">Score <span>0</span></p>
+        <p class="tp">Total Score <span>0</span></p>
+        <div class="hmnxt">
+            <button class="homebtn" id="homebtn">Home</button>
+            <button class="Next_round" id="nextround">Next Round</button>
+        </div>
+    </div>
+    <div class="round_result_over">
+        <h3>Round Result</h3>
+        <p>You need at least two correct answers to continue</p>
+        <p>Thanks For Playing</p>
+        <button class="homebtn" id="homebtn">Home</button>
+    </div>
+    <div class="instructions">
+        <h3>Instructions</h3>
+        <p class="instruction1">Name the top 5 survey answers in each round.</p>
+        <p class="instruction2">You need at least 2 correct guesses to move to the next round.</p>
+        <p class="instruction3">A round ends if you answered incorrectly 3 times.</p>
+        <button class="continuebtn" id="continuebtn">CONTINUE</button>
+    </div>
+    <div class="xImageContainer" id="xImageContainer">
+        <img src="assets/images/x-png.png" class="xImg" id="xImg1" alt="">
+        <img src="assets/images/x-png.png" class="xImg" id="xImg2" alt="">
+        <img src="assets/images/x-png.png" class="xImg" id="xImg3" alt="">
+    </div>
+    <div class="pause_container">
+        <h4>Settings</h4>
+        <div class="pauseaudio">
+            <img src="assets/images/music.png" alt=""><span><button id="pauseaudioBtn">ON</button></span>
+        </div>
+        <div class="pausesound">
+            <img src="assets/images/volume.png" alt=""><span><button id="pausesoundBtn">ON</button></span>
+            <audio src="assets/audio/click.mp3" id="effect" preload="auto"></audio>
+        </div>
+        <div class="pausebtns">
+            <button class="homebtn" id="homebtn">Home</button>
+            <button class="pauseclosebtn" id="resume">Resume</button>
+
+        </div>
+       
+    </div>
+    <div class="final_round">
+        <h3>Congratulations!</h3>
+        <p>You completed the game!</p>
+        <p>Your total points: <span class="points-display">0</span></p>
+        <button class="homebtn" id="homebtn">Home</button>
+    </div>
+
+    <div class="twoplayer_content">
+       
+        <div class="instructions_content">
+          <h2>🎮 Two Player Game Instructions</h2>
+          <ol>
+            <li><strong>Enter Player Names</strong><br>
+              Player 1 and Player 2 will be asked to enter their <em>family names</em> before the game begins.
+            </li>
+            <li><strong>Game Layout</strong><br>
+              Player 1 will appear on the <strong>left side</strong>, Player 2 on the <strong>right</strong>. The <strong>question</strong> appears in the center.
+            </li>
+            <li><strong>Buzz In!</strong><br>
+              When the question is displayed, press your key to buzz in:
+              <ul>
+                <li>🅳 – Player 1</li>
+                <li>🅻 – Player 2</li>
+              </ul>
+              The <strong>first to press</strong> answers first.
+            </li>
+            <li><strong>Answering</strong><br>
+              Correct answer = point! Wrong answer = the other player gets a chance.
+            </li>
+            <li><strong>Game Objective</strong><br>
+              Compete to get the most points. The player with the <strong>highest score</strong> wins!
+            </li>
+          </ol>
+          <p><em>Press Start when you're ready. Good luck!</em> 🧠⚡</p>
+          <button id="startTwoPlayerBtn">Start Game</button>
+        </div>
+    </div>
+    <div class="twoplayer_startGame">
+       
+        <h3>Enter Family Names</h3>
+        <label for="player1Name">Player 1 Family Name:</label>
+        <input type="text" id="player1Name" placeholder="e.g., Smith" required>
+
+        <label for="player2Name">Player 2 Family Name:</label>
+        <input type="text" id="player2Name" placeholder="e.g., Johnson" required>
+
+        <button id="startTwoPlayerGameBtn">Start Game</button>
+        
+    </div>
+    <div class="vs-container">
+        <div class="startplayer1">
+          <img src="assets/images/first-team.png" alt="Player 1 Avatar">
+          <span class="play1">Player 1</span>
+        </div>
+      
+        <img src="assets/images/vs.png" alt="" class="vs">
+      
+        <div class="startplayer2">
+            <span class="play2">Player 2</span>
+          <img src="assets/images/second-team.png" alt="Player 2 Avatar">
+         
+        </div>
+      </div>
+    <div class="twoPstart_game_cont">
+        
+        <h3>Round</h3>
+        <div class="player1">
+            <img class="p1img" src="assets/images/first-team.png" alt="error"><span class="P1teamName">TeamName</span>
+          
+            <div class="P1scoreandworng">
+                <div class="p1Score">
+                    <img src="assets/images/trophy.png" alt="">
+                    <span id="P1points">0</span>
+                </div>
+                <div class="p1wrong">
+                    <span class="x" id="p1x1"><b>X</b></span>
+                    <span class="x" id="p1x2"><b>X</b></span>
+                    <span class="x" id="p1x3"><b>X</b></span>
+                  </div>
+            </div>
+            <div class="key-display">
+                <p>Press <span class="key">D</span> to Buzz!</p>
+            </div>
+        </div>
+        <div class="middlecont">
+            <!-- <button class="twoplayerhomebtn">Home</button> -->
+                <div class="screen">
+                    <p class="twop1">We asked 100 people in a survey</p>
+                    <p class="twop2">Here is your question....</p>
+                    <p class="twopquestion"></p>
+                    <p class="buzzCountdown"></p>
+                    <p class="whoBuzzed"></p>
+                    <p id="messageDisplay" class="messageDisplay"></p>
+                </div>
+                <div class="survey_container">
+                    <div class="cont1">
+                        <div class="answer_cont1"><p class="answer1"></p></div>
+                        <div class="point_cont1"><p class="points1"></p></div>
+                    </div>
+                    <div class="cont2">
+                        <div class="answer_cont2"><p class="answer2"></p></div>
+                        <div class="point_cont2"><p class="points2"></p></div>
+                    </div>
+                    <div class="cont3">
+                        <div class="answer_cont3"><p class="answer3"></p></div>
+                        <div class="point_cont3"><p class="points3"></p></div>
+                    </div>
+                    <div class="cont4">
+                        <div class="answer_cont4"><p class="answer4"></p></div>
+                        <div class="point_cont4"><p class="points4"></p></div>
+                    </div>
+                    <div class="cont5">
+                        <div class="answer_cont5"><p class="answer5"></p></div>
+                        <div class="point_cont5"><p class="points5"></p></div>
+                    </div>
+                </div>
+             <input type="text" class="twopanswerInput" placeholder="Enter your answer here!" />
+        </div>
+        <div class="player2">
+            <img src="assets/images/second-team.png" class="p2img" alt=""><span class="P2teamName">TeamName</span>
+            <div class="P2scoreandworng">
+                <div class="p2Score">
+                    <span id="p2points">0</span>
+                    <img src="assets/images/trophy.png" alt="">
+                    
+                </div>
+                <div class="p2wrong">
+                    <span class="x" id="p2x1"><b>X</b></span>
+                    <span class="x" id="p2x2"><b>X</b></span>
+                    <span class="x" id="p2x3"><b>X</b></span>
+                </div>
+            </div>
+            <div class="key-display">
+                <p>Press <span class="key">L</span> to Buzz!</p>
+            </div>
+        </div>
+    </div>
+    <div class="towPround_result_proceed">
+        <h3>Round Result</h3>
+        <p class="team_score">TeamName1 : <span>0</span></p>
+        <p class="team_score">TeamName2 : <span>0</span></p>
+        <div class="twoPhmnxt">
+          <button class="twoplayerhomebtn">Home</button>
+          <button class="twoPnxtRound">Next Round</button>
+        </div>
+    </div>
+
+    <div class="twoPfinal_round">
+        <div class="winner_side">
+            <h3>Final Round</h3>
+            <div class="winner_info">
+                <img src="assets/images/first-team.png" alt="Winner Avatar" class="winner_avatar">
+                <span class="winner_name">Winner's Name</span>
+                <div class="winner_score">
+                    <img src="assets/images/trophy.png" alt="Score">
+                    <span id="winnerPoints">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game_side">
+            <div class="timer_container">
+                <img src="assets/images/timer.png" alt="Timer">
+                <span id="finalRoundTimer">30s</span>
+            </div>
+            
+            <div class="screen">
+                <p class="congrats_message">Congratulations on reaching the Final Round!</p>
+                <p class="points_goal">In this round, you must reach 100 points to win!</p>
+                <p class="goodluck_message">Good luck!</p>
+                <p class="final_p1">We asked 100 people in a survey</p>
+                <p class="final_p2">Here is your final question....</p>
+                <p class="final_question"></p>
+                <p class="last_message1">That was A tough Game isnt?</p>
+                <p class="last_message2">But you did great</p>
+                <p class="last_message3">Let's see how many points you've got</p>
+            </div>
+            
+            <div class="survey_container">
+                <div class="final_cont1">
+                    <div class="final_answer_cont1"><p class="final_answer1"></p></div>
+                    <div class="final_point_cont1"><p class="final_points1"></p></div>
+                </div>
+                <div class="final_cont2">
+                    <div class="final_answer_cont2"><p class="final_answer2"></p></div>
+                    <div class="final_point_cont2"><p class="final_points2"></p></div>
+                </div>
+                <div class="final_cont3">
+                    <div class="final_answer_cont3"><p class="final_answer3"></p></div>
+                    <div class="final_point_cont3"><p class="final_points3"></p></div>
+                </div>
+                <div class="final_cont4">
+                    <div class="final_answer_cont4"><p class="final_answer4"></p></div>
+                    <div class="final_point_cont4"><p class="final_points4"></p></div>
+                </div>
+                <div class="final_cont5">
+                    <div class="final_answer_cont5"><p class="final_answer5"></p></div>
+                    <div class="final_point_cont5"><p class="final_points5"></p></div>
+                </div>
+            </div>
+            
+            <input type="text" class="final_answerInput" placeholder="Enter your answer here!" />
+            
+            <div class="final_score" style="display: none;">
+                <h2>Final Score: 0 points</h2>
+                <p>Better luck next time!</p>
+                <button class="final_home_btn">Home</button>
+            </div>
+        </div>
+    </div>
+    <div class="winner_message">
+        <h2>Round Three Complete!</h2>
+        <p class="winner_text"></p>
+        <p class="final_round_text">Proceeding to Final Round...</p>
+        <div class="winner_buttons">
+            <button class="finalhomebtn">Home</button>
+            <button class="proceed_btn" id="proceedToFinal">Proceed to Final Round</button>
+        </div>
+    </div>
+    <div class="menucont" style="display: none;">
+        <button class="leaderboardBtn">Leaderboard</button>
+        <button class="exit">Exit</button>
+    </div>
+    <div class="leaderboardcont">
+        <button class="x_button">x</button>
+        <h3>Top Players</h3>
+        <div class="topplayers">
+        </div>
+
+    </div>
+    <script src="js/functions.js"></script>
+</body>
+</html>
+
+  
