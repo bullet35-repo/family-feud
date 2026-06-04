@@ -1,0 +1,34 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHP / Composer
+/vendor/
+/.idea/
+/.vscode/
+/.phpunit.cache
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Logs and runtime files
+logs/
+*.log
+*.cache
+
+# XAMPP / Apache temp files
+/tmp/
+*.tmp
+
+# IDE files
+*.sublime-project
+*.sublime-workspace
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+node_modules/
