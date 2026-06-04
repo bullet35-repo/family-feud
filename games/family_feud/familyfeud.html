@@ -51,19 +51,61 @@
         <button class="return" id="return">
             <img src="assets/images/return.png" alt="">
         </button>
-        <button class="single_player" id="singlebtn">
-            <img src="assets/images/singlePlayer.png" alt="">
-            <h3>
-                Single Player
-            </h3>
-        </button>
-       
-        <button class="two_player">
-            <img src="assets/images/2_player.png" alt="">
-            <h3>
-                Two Player
-            </h3>
-        </button>
+        <div class="mode_hub">
+            <div class="mode_header">
+                <span>Choose Mode</span>
+                <h2>Family Feud Arena</h2>
+            </div>
+            <div class="mode_section">
+                <div class="mode_label">
+                    <span>Local</span>
+                    <p>Play on this device</p>
+                </div>
+                <div class="mode_grid">
+                    <button class="mode_card single_player" id="singlebtn">
+                        <img src="assets/images/singlePlayer.png" alt="">
+                        <span class="mode_badge">1P</span>
+                        <h3>Single Player</h3>
+                        <p>Clear the board solo and chase the highest score.</p>
+                    </button>
+                    <button class="mode_card two_player">
+                        <img src="assets/images/2_player.png" alt="">
+                        <span class="mode_badge">2P</span>
+                        <h3>Two Player</h3>
+                        <p>Buzz in locally and battle family against family.</p>
+                    </button>
+                </div>
+            </div>
+            <div class="mode_section">
+                <div class="mode_label online">
+                    <span>Online</span>
+                    <p>Room play and remote teams</p>
+                </div>
+                <div class="mode_grid">
+                    <button class="mode_card online_single" id="onlineSingleBtn">
+                        <img src="assets/images/singlePlayer.png" alt="">
+                        <span class="mode_badge">Online 1P</span>
+                        <h3>Online Single</h3>
+                        <p>Play solo online and submit your score globally.</p>
+                    </button>
+                    <button class="mode_card family_vs_family" id="familyVsFamilyBtn">
+                        <img src="assets/images/vs.png" alt="">
+                        <span class="mode_badge">4 Members</span>
+                        <h3>Family vs Family</h3>
+                        <p>Create two online families with 4 members each.</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="online_mode_notice" id="onlineModeNotice">
+        <div class="online_notice_card">
+            <button class="online_notice_close" id="onlineNoticeClose">x</button>
+            <span class="notice_badge">Online Mode</span>
+            <h3 id="onlineNoticeTitle">Coming Soon</h3>
+            <p id="onlineNoticeText">Online rooms need matchmaking and multiplayer syncing. The mode is ready in the menu, and we can wire the backend next.</p>
+            <button class="notice_primary" id="onlineNoticeOk">Got it</button>
+        </div>
     </div>
     <div class="start_game">
         <button class="pause" id="pause">
@@ -172,30 +214,44 @@
     <div class="twoplayer_content">
        
         <div class="instructions_content">
-          <h2>🎮 Two Player Game Instructions</h2>
-          <ol>
-            <li><strong>Enter Player Names</strong><br>
-              Player 1 and Player 2 will be asked to enter their <em>family names</em> before the game begins.
-            </li>
-            <li><strong>Game Layout</strong><br>
-              Player 1 will appear on the <strong>left side</strong>, Player 2 on the <strong>right</strong>. The <strong>question</strong> appears in the center.
-            </li>
-            <li><strong>Buzz In!</strong><br>
-              When the question is displayed, press your key to buzz in:
-              <ul>
-                <li>🅳 – Player 1</li>
-                <li>🅻 – Player 2</li>
-              </ul>
-              The <strong>first to press</strong> answers first.
-            </li>
-            <li><strong>Answering</strong><br>
-              Correct answer = point! Wrong answer = the other player gets a chance.
-            </li>
-            <li><strong>Game Objective</strong><br>
-              Compete to get the most points. The player with the <strong>highest score</strong> wins!
-            </li>
-          </ol>
-          <p><em>Press Start when you're ready. Good luck!</em> 🧠⚡</p>
+          <div class="briefing_header">
+            <span class="briefing_badge">Local Match</span>
+            <h2>Two Player Rules</h2>
+            <p>Face off on one keyboard, control the board, and steal the round when your rival slips.</p>
+          </div>
+          <div class="briefing_grid">
+            <article class="briefing_card">
+              <span class="briefing_number">1</span>
+              <h3>Name Your Families</h3>
+              <p>Enter both family names before the match begins.</p>
+            </article>
+            <article class="briefing_card">
+              <span class="briefing_number">2</span>
+              <h3>Take Your Sides</h3>
+              <p>Player 1 plays on the left. Player 2 plays on the right.</p>
+            </article>
+            <article class="briefing_card">
+              <span class="briefing_number">3</span>
+              <h3>Answer or Steal</h3>
+              <p>Correct answers score points. Miss three times and the other player can steal.</p>
+            </article>
+            <article class="briefing_card">
+              <span class="briefing_number">4</span>
+              <h3>Win the Scoreboard</h3>
+              <p>The player with the highest score after the final round wins.</p>
+            </article>
+          </div>
+          <div class="buzz_panel">
+            <div>
+              <span>Player 1 Buzz</span>
+              <strong>D</strong>
+            </div>
+            <div>
+              <span>Player 2 Buzz</span>
+              <strong>L</strong>
+            </div>
+          </div>
+          <p class="briefing_note">Press Start when both players are ready.</p>
           <div class="twoplayer-actions">
             <button id="backTwoPlayerBtn">Back</button>
             <button id="startTwoPlayerBtn">Start Game</button>

@@ -14,6 +14,13 @@
     const continuebtn = document.getElementById('continuebtn');
     const instructions = document.querySelectorAll(".instructions p");
     const singlebtn = document.getElementById('singlebtn');
+    const onlineSingleBtn = document.getElementById('onlineSingleBtn');
+    const familyVsFamilyBtn = document.getElementById('familyVsFamilyBtn');
+    const onlineModeNotice = document.getElementById('onlineModeNotice');
+    const onlineNoticeTitle = document.getElementById('onlineNoticeTitle');
+    const onlineNoticeText = document.getElementById('onlineNoticeText');
+    const onlineNoticeClose = document.getElementById('onlineNoticeClose');
+    const onlineNoticeOk = document.getElementById('onlineNoticeOk');
     const instruction = document.querySelector('.instructions');
     const single_player = document.querySelector('.choose_cont .single_player ');
     const two_payer = document.querySelector('.choose_cont .two_player ');
@@ -210,6 +217,16 @@
       syncSettingsUi();
       saveGlobalSettings();
     }
+
+    function showOnlineNotice(title, text) {
+      onlineNoticeTitle.textContent = title;
+      onlineNoticeText.textContent = text;
+      onlineModeNotice.style.display = 'flex';
+    }
+
+    function closeOnlineNotice() {
+      onlineModeNotice.style.display = 'none';
+    }
     
 
 window.addEventListener('DOMContentLoaded', () => { 
@@ -343,6 +360,28 @@ window.addEventListener('DOMContentLoaded', () => {
         instructions.forEach((step, index) => {
           step.style.display = index === 0 ? 'block' : 'none';
       });
+    });
+
+    onlineSingleBtn.addEventListener('click', () => {
+      showOnlineNotice(
+        'Online Single',
+        'Online single-player is planned for global score runs. For now, use Local Single Player to play immediately and keep points on your account.'
+      );
+    });
+
+    familyVsFamilyBtn.addEventListener('click', () => {
+      showOnlineNotice(
+        'Family vs Family',
+        'This mode will support online rooms with two families and 4 members per family. The next step is adding room codes, teams, and real-time answer syncing.'
+      );
+    });
+
+    onlineNoticeClose.addEventListener('click', closeOnlineNotice);
+    onlineNoticeOk.addEventListener('click', closeOnlineNotice);
+    onlineModeNotice.addEventListener('click', (event) => {
+      if (event.target === onlineModeNotice) {
+        closeOnlineNotice();
+      }
     });
     
     homebtn.forEach((btn) => {
